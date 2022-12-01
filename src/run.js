@@ -9,5 +9,5 @@ const main = async (day, part, inputType = 'real') => {
   console.log(result)
 }
 
-const args = process.argv.slice(-3);
+const args = process.argv.slice(-3)
 main(args[0], args[1], args[2])

@@ -1,4 +1,4 @@
-const R = require('ramda');
+const R = require('ramda')
 const {readInput} = require('../file')
 
 const getTestInput = () => readInput(`${__dirname}/test-input.txt`)
