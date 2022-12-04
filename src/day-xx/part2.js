@@ -5,7 +5,9 @@ const getTestInput = () => readInput(`${__dirname}/test-input.txt`)
 
 const getInput = () => readInput(`${__dirname}/input.txt`)
 
-const main = prop => parseInt(prop, 10) + 1
+const main = data => {
+  console.log(data)
+}
 
 module.exports = {
   getInput,
