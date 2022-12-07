@@ -8,7 +8,6 @@ describe('day 02', () => {
       expect(play('Z', 'C')).toEqual(3)
     })
 
-
     test('should handle test input', async () => {
       const data = await getTestInput()
       const result = main(data)
