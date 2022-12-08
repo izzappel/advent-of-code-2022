@@ -5,11 +5,12 @@ const getTestInput = () => readInput(`${__dirname}/test-input.txt`)
 
 const getInput = () => readInput(`${__dirname}/input.txt`)
 
-const isVisibleFrom = (tree, getPath, indexes, grid) =>
+const isVisibleFrom = R.curry((grid, tree, getPath, indexes) =>
   R.pipe(
     R.map(idx => parseInt(R.pathOr(-1, getPath(idx), grid), 10)),
     R.all(t => t < tree)
   )(indexes)
+)
 
 const getIndexes = (length, base) => Array.from({length}, (_, i) => base - 1 - i)
 
@@ -19,35 +20,29 @@ const isVisisble = (grid, coordinates) => {
 
   const maxRow = grid.length
   const maxCol = R.head(grid).length
+  const isVisibleFromTree = isVisibleFrom(grid, tree)
 
-  const visibleFromTop = isVisibleFrom(tree, idx => [idx, col], getIndexes(row, row), grid)
-  const visibleFromBottom = isVisibleFrom(tree, idx => [idx, col], getIndexes(maxRow - row - 1, maxRow), grid)
-  const visibleFromLeft = isVisibleFrom(tree, idx => [row, idx], getIndexes(col, col), grid)
-  const visibleFromRight = isVisibleFrom(tree, idx => [row, idx], getIndexes(maxCol - col - 1, maxCol), grid)
+  const visibleFromTop = isVisibleFromTree(idx => [idx, col], getIndexes(row, row))
+  const visibleFromBottom = isVisibleFromTree(idx => [idx, col], getIndexes(maxRow - row - 1, maxRow))
+  const visibleFromLeft = isVisibleFromTree(idx => [row, idx], getIndexes(col, col))
+  const visibleFromRight = isVisibleFromTree(idx => [row, idx], getIndexes(maxCol - col - 1, maxCol))
 
   return R.any(R.identity, [visibleFromTop, visibleFromBottom, visibleFromLeft, visibleFromRight])
 }
 
-const main = data => {
-  const r = R.reduce(
-    ({sum, rowIndex}, line) => {
-      const trees = line.split('')
-
-      const treeVisibility = R.pipe(
+const main = data =>
+  R.addIndex(R.reduce)(
+    (sum, line, rowIndex) =>
+      R.pipe(
+        R.split(''),
         R.addIndex(R.map)((_, colIndex) => isVisisble(data, [rowIndex, colIndex])),
-        R.filter(R.identity)
-      )(trees)
-
-      return {
-        sum: sum + treeVisibility.length,
-        rowIndex: rowIndex + 1
-      }
-    },
-    {sum: 0, rowIndex: 0},
+        R.filter(R.identity),
+        R.length,
+        R.add(sum)
+      )(line),
+    0,
     data
   )
-  return r.sum
-}
 
 module.exports = {
   getInput,
